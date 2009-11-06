@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animation", "Animation\Animation.csproj", "{304623B9-401A-40F9-A6CE-689A2F966276}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{1FA0DA0C-37ED-4168-A751-E5B1EEB2B470}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{4E501C1E-D834-4E5F-994F-92FC0EF190BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animation.Tests", "Unit Tests\Animation.Tests\Animation.Tests.csproj", "{A12E4422-E81C-40EA-B884-ABDC56D0A5AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProject", "..\Examples\ExampleProject\ExampleProject.csproj", "{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ExampleProject.Web", "..\Examples\ExampleProject.Web\", "{B4304E50-19E6-40D6-AF22-7F4479B6351E}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
+		Debug.AspNetCompiler.VirtualPath = "/ExampleProject.Web"
+		Debug.AspNetCompiler.PhysicalPath = "..\Examples\ExampleProject.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\ExampleProject.Web\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/ExampleProject.Web"
+		Release.AspNetCompiler.PhysicalPath = "..\Examples\ExampleProject.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\ExampleProject.Web\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "49569"
+		DefaultWebSiteLanguage = "Visual C#"
+		ProjOutputReferences = "{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}||false;"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{304623B9-401A-40F9-A6CE-689A2F966276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{304623B9-401A-40F9-A6CE-689A2F966276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{304623B9-401A-40F9-A6CE-689A2F966276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{304623B9-401A-40F9-A6CE-689A2F966276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A12E4422-E81C-40EA-B884-ABDC56D0A5AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12E4422-E81C-40EA-B884-ABDC56D0A5AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12E4422-E81C-40EA-B884-ABDC56D0A5AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12E4422-E81C-40EA-B884-ABDC56D0A5AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4304E50-19E6-40D6-AF22-7F4479B6351E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4304E50-19E6-40D6-AF22-7F4479B6351E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4304E50-19E6-40D6-AF22-7F4479B6351E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4304E50-19E6-40D6-AF22-7F4479B6351E}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A12E4422-E81C-40EA-B884-ABDC56D0A5AC} = {1FA0DA0C-37ED-4168-A751-E5B1EEB2B470}
+		{2251AD41-E6C0-4110-A92F-6D1CDE4C83EE} = {4E501C1E-D834-4E5F-994F-92FC0EF190BD}
+		{B4304E50-19E6-40D6-AF22-7F4479B6351E} = {4E501C1E-D834-4E5F-994F-92FC0EF190BD}
+	EndGlobalSection
+EndGlobal

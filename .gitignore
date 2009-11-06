@@ -1,0 +1,12 @@
+*.suo
+*.user
+VersionInfo.cs
+coverage.log
+coverage.xml
+FxCopReport.xml
+TestResult.xml
+Build/
+Source/Animation/Bin/
+Source/Animation/obj/
+Source/Unit Tests/Animation.Tests/bin/
+Source/Unit Tests/Animation.Tests/obj/

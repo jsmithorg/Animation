@@ -1,0 +1,487 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="DevBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Default version information -->
+  <PropertyGroup>
+    <Major>0</Major>
+    <Minor>1</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+    <AssemblyVersion></AssemblyVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <SolutionDir>Source\</SolutionDir>
+    <DependencyDir>Dependencies\</DependencyDir>
+    <DocumentationDir>Documentation\</DocumentationDir>
+    <BuildDir>Build\</BuildDir>
+    <BuildTempDir>$(BuildDir)_temp\</BuildTempDir>
+    <MergedAssemblyName>Merged.dll</MergedAssemblyName>
+    <DocDir>$(BuildTempDir)doc\</DocDir>
+    <StrongKey>$(SolutionDir)StrongKey\keyPair.snk</StrongKey>
+    <!--<PublicKey>912cd2b306e49870</PublicKey>-->
+    <ILMerge>&quot;$(DependencyDir)\ILMerge\Ilmerge.exe&quot;</ILMerge>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UnitTestDir>$(SolutionDir)Unit Tests\</UnitTestDir>
+    <NUnitProject>$(UnitTestDir)**\*.nunit</NUnitProject>
+    <NUnitPath>$(DependencyDir)NUnit 2.4.8\</NUnitPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--<SandcastlePath>C:\Program%20Files\Sandcastle\</SandcastlePath>-->
+    <NDocPath>$(DependencyDir)NDoc 2.0\</NDocPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <UnitTestProjectFiles Include="$(UnitTestDir)**\*.csproj" />
+    <ProjectFiles Include="$(SolutionDir)**\*.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <FxCopPath>$(DependencyDir)Microsoft FxCop 1.36\</FxCopPath>
+    <SilverlightLibraryPath>%programfiles%\Reference Assemblies\Microsoft\Framework\Silverlight\v3.0</SilverlightLibraryPath>
+  </PropertyGroup>
+  
+  <!-- The assembly info files we'll use for versioning -->
+  <ItemGroup>
+    <AssemblyInfoFiles Include="$(SolutionDir)**\AssemblyInfo.*"/>
+  </ItemGroup>
+
+  <Import Project="$(DependencyDir)MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+
+  <UsingTask TaskName="NCoverExplorer.MSBuildTasks.NCoverExplorer" AssemblyFile="$(DependencyDir)NCoverExplorer.Extras\bin\NCoverExplorer.MSBuildTasks.dll"/>
+  <UsingTask TaskName="NCoverExplorer.MSBuildTasks.NCover" AssemblyFile="$(DependencyDir)NCoverExplorer.Extras\bin\NCoverExplorer.MSBuildTasks.dll"/>
+  <UsingTask TaskName="NCoverExplorer.MSBuildTasks.NUnitProject" AssemblyFile="$(DependencyDir)NCoverExplorer.Extras\bin\NCoverExplorer.MSBuildTasks.dll"/>
+  <UsingTask TaskName="JSmith.MSBuild.Tasks.Git.GitRevision" AssemblyFile="$(DependencyDir)JSmith.MSBuild.Tasks/JSmith.MSBuild.Tasks.dll"/>
+  <UsingTask TaskName="JSmith.MSBuild.Tasks.Git.GitInfo" AssemblyFile="$(DependencyDir)JSmith.MSBuild.Tasks/JSmith.MSBuild.Tasks.dll"/>
+
+  <!-- Clean the Visual Studio projects -->
+  <Target Name="Clean" DependsOnTargets="CleanVersionInfoFiles">
+    
+    <!-- Clean our projects -->
+    <Message Text="Cleaning projects @(ProjectFiles)" />
+    <MSBuild Projects="@(ProjectFiles)" Targets="Clean" />
+
+    <RemoveDir Directories="$(BuildTempDir)" />
+    
+  </Target>
+
+  <!-- Clean the VersionInfo files -->
+  <Target Name="CleanVersionInfoFiles">
+    
+    <!-- Find any previous VersionInfo.cs files and remove them -->
+    <ItemGroup>
+      <OldVersionInfoFiles Include="$(SolutionDir)**\VersionInfo.*" />
+    </ItemGroup>
+    <Delete Files="@(OldVersionInfoFiles)" />
+
+    <!-- Create the pathnames for the VersionInfo.cs files -->
+    <RegexReplace Input="@(AssemblyInfoFiles)" Expression="AssemblyInfo" Replacement="VersionInfo">
+      <Output ItemName="VersionInfoFiles" TaskParameter="Output" />
+    </RegexReplace>
+    
+    <!-- Create new empty VersionInfo.cs files -->
+    <Touch Files="@(VersionInfoFiles)" AlwaysCreate="true" />
+
+  </Target>
+
+  <!-- Determine the version number for the assembly -->
+  <Target Name="Version" DependsOnTargets="VersionSvn;VersionGit"></Target>
+  
+  <Target Name="VersionSvn" Condition="Exists('.svn')">
+
+    <!-- Get Revision (from svn) -->
+    <SvnInfo LocalPath="">
+      <Output TaskParameter="LastChangedDate" PropertyName="LastChangedDate" />
+      <Output TaskParameter="Revision" PropertyName="Revision"/>
+    </SvnInfo>
+
+    <!-- Get Revision Date (from svn) -->
+    <RegexReplace Input="$(LastChangedDate)" Expression="(.*?)\/(.*?)\/(.*)" Replacement="$1$2">
+      <Output ItemName ="RevisionDate" TaskParameter="Output" />
+    </RegexReplace>
+
+    <!-- Set our assembly build number -->
+    <CreateProperty Value="@(RevisionDate)">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </CreateProperty>
+
+    <!-- Set our assembly version convenience property -->
+    <CreateProperty Value="$(Major).$(Minor).$(Build).$(Revision)">
+      <Output TaskParameter="Value" PropertyName="AssemblyVersion" />
+    </CreateProperty>
+
+    <Message Text="Assembly Version::::::::::::::::::::::$(AssemblyVersion)" />
+
+    <!-- Create the pathnames for the VersionInfo.cs files -->
+    <RegexReplace Input="@(AssemblyInfoFiles)" Expression="AssemblyInfo" Replacement="VersionInfo">
+      <Output ItemName="VersionInfoFiles" TaskParameter="Output" />
+    </RegexReplace>
+
+    <!-- Set the version number in a newly created Properties\VersionInfo.cs file -->
+    <AssemblyInfo CodeLanguage="CS"
+      OutputFile="%(VersionInfoFiles.Identity)"
+      AssemblyVersion="$(AssemblyVersion)"
+      AssemblyFileVersion="$(AssemblyVersion)" />
+
+  </Target>
+
+  <!-- Write GitInfo Task -->
+  <Target Name="VersionGit" Condition="Exists('.git')">
+
+    <!-- Get Revision (from svn) -->
+    <!--<SvnInfo LocalPath="">
+      <Output TaskParameter="LastChangedDate" PropertyName="LastChangedDate" />
+      <Output TaskParameter="Revision" PropertyName="Revision"/>
+    </SvnInfo>-->
+
+    <!-- Get Revision Date (from svn) -->
+    <!--<RegexReplace Input="$(LastChangedDate)" Expression="(.*?)\/(.*?)\/(.*)" Replacement="$1$2">
+      <Output ItemName ="RevisionDate" TaskParameter="Output" />
+    </RegexReplace>-->
+
+    <!-- Set our assembly build number -->
+    <!--<CreateProperty Value="@(RevisionDate)">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </CreateProperty>
+
+    -->
+
+    <GitRevision ContinueOnError="true">
+      <Output TaskParameter="RevisionSinceLastTag" PropertyName="Revision"/>
+      <Output TaskParameter="LastTag" PropertyName="Tag" />
+    </GitRevision>
+
+    <Message Text="REVISION!!!! $(Revision) :::: $(Tag)" />
+    
+    <GitInfo DateFormat="MMdd" ContinueOnError="true">
+      <Output TaskParameter="Hash" PropertyName="Hash" />
+      <Output TaskParameter="Author" PropertyName="Author" />
+      <Output TaskParameter="AuthorEmail" PropertyName="AuthorEmail" />
+      <Output TaskParameter="RevisionDate" PropertyName="Build" />
+    </GitInfo>
+
+    <Message Text="INFO!!!! $(Hash) :::: $(Author) :::: $(AuthorEmail) :::: $(Build)" />
+
+    <!-- Set our assembly version convenience property -->
+    
+    <CreateProperty Value="$(Major).$(Minor).$(Build).$(Revision)">
+      <Output TaskParameter="Value" PropertyName="AssemblyVersion" />
+    </CreateProperty>
+    
+    <!--<PropertyGroup>
+      <GitCmd>&quot;%programfiles%\git\bin\git&quot; log -no-color -n 1 -date=iso</GitCmd>
+    </PropertyGroup>
+
+    <Exec Command="$(GitCmd)" />
+    
+    <Message Text="Assembly Version::::::::::::::::::::::$(AssemblyVersion)" />-->
+    
+    <!-- Set the version number in a newly created Properties\VersionInfo.cs file -->
+    <AssemblyInfo CodeLanguage="CS"
+      OutputFile="%(VersionInfoFiles.Identity)"
+      AssemblyVersion="$(AssemblyVersion)"
+      AssemblyFileVersion="$(AssemblyVersion)" />
+    
+  </Target>
+  
+  <!-- Build the core assemblies -->
+  <Target Name="CoreBuild" DependsOnTargets="Clean;Version">
+
+    <!-- Build our VS projects -->
+    <Message Text="Building projects @(ProjectFiles)" />
+    <MSBuild Projects="@(ProjectFiles)" Targets="Build" />
+    
+  </Target>
+
+  <!-- Create a development build (core assemblies only) -->
+  <Target Name="DevBuild" DependsOnTargets="CoreBuild">
+
+    <!--<CallTarget Targets="CoreBuild" />-->
+
+    <!-- Clear/Create our temp directory -->
+    <MakeDir Directories="$(BuildDir)" />
+    <MakeDir Directories="$(BuildTempDir)" />
+    <MakeDir Directories="$(BuildTempDir)bin\" />
+    <!--<MakeDir Directories="$(BuildTempDir)www\" />-->
+
+    <!-- Project Assemblies -->
+    <ItemGroup>
+      <ProjectAssemblies Include="$(SolutionDir)**\bin\$(Configuration)\*.*" Exclude="$(UnitTestDir)**\*" />
+      <!--<ProjectAssemblies Include="$(SolutionDir)MySecondProject\bin\$(Configuration)\*.*" />-->
+    </ItemGroup>
+
+    <!--<PropertyGroup>
+      <WebsiteDir>$(SolutionDir)MyWebsite\</WebsiteDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <WebsiteFiles Include="$(WebsiteDir)**\*.*" />
+    </ItemGroup>-->
+    
+    <!-- Copy to the temp directory -->
+    <Message Text="Copying @(ProjectAssemblies) to $(BuildTempDir)bin\" />
+    <Copy SourceFiles="@(ProjectAssemblies)" DestinationFolder="$(BuildTempDir)bin\" />
+
+    <Message Text="Copying website $(WebsiteDir) to $(BuildTempDir)www\" />
+    <Copy SourceFiles="@(WebsiteFiles)" DestinationFiles="@(WebsiteFiles->'$(BuildTempDir)www\%(RecursiveDir)%(Filename)%(Extension)')" />
+    
+    <!-- Grab all our files in the temp directory -->
+    <!--<ItemGroup>
+      <TempBuildFiles Include="$(BuildTempDir)*.*" />
+    </ItemGroup>-->
+
+    <!-- Merge assemblies (if necessary) -->
+    <!--<Message Text="Merging assemblies $(ILMerge) /log /copyattrs:True /wildcards /keyfile:$(StrongKey) /out:$(BuildTempDir)bin\$(MergedAssemblyName) $(BuildTempDir)*.dll" />
+    <Exec ContinueOnError="false" Command="$(ILMerge) /log /copyattrs:True /wildcards /keyfile:$(StrongKey) /out:$(BuildTempDir)bin\$(MergedAssemblyName) $(BuildTempDir)*.dll"/>-->
+    
+
+    <!-- Delete our temporary files -->
+    <!--<Message Text="Deleting file @(TempBuildFiles)" />
+    <Delete Files="@(TempBuildFiles)" />-->
+    
+
+    <!-- Create our versioned build directory -->
+    <PropertyGroup>
+      <VersionFolder>$(BuildDir)v$(Major).$(Minor).$(Build).$(Revision)\</VersionFolder>
+    </PropertyGroup>
+
+    <Message Text="VERSION folder $(VersionFolder), $(Build), $(Revision), $(AssemblyVersion)" />
+    
+    <!-- Delete the version folder if it currently exists -->
+    <ItemGroup>
+      <OldFiles Include="$(VersionFolder)**\*" />
+    </ItemGroup>
+    <ItemGroup>
+      <OldRootFolders Include="@(OldFiles->'%(RootDir)%(Directory)')" />
+    </ItemGroup>
+
+    <Message Text="Files to delete: @(OldFiles)" />
+    <Delete Files="@(OldFiles)" />
+
+    <Message Text="Folders to delete: @(OldRootFolders)" />
+    <RemoveDir Directories="@(OldRootFolders)" >
+      <Output TaskParameter="RemovedDirectories" PropertyName="RemovedDirs" />
+    </RemoveDir>
+    <Message Text="Folders deleted: @(RemovedDirs)" />
+
+    <RemoveDir Directories="$(VersionFolder)" />
+    <!--<MakeDir Directories="$(VersionFolder)" />-->
+    <!--<MSBuild.ExtensionPack.FileSystem.Folder TaskAction="Move" Path="$(BuildTempDir)" TargetPath="$(VersionFolder)"/>-->
+
+    <ItemGroup>
+      <TempFiles Include="$(BuildTempDir)**/*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(TempFiles)" DestinationFiles="@(TempFiles->'$(VersionFolder)%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <!-- Remove temporary files -->
+    <ItemGroup>
+      <FilesToDelete Include="$(BuildTempDir)**/*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+
+    <!-- Remove temporary directories -->
+    <RemoveDir Directories="$(BuildTempDir)" />
+    
+  </Target>
+  
+  <!-- Create a staging build (Dev build + unit tests + publish to IIS -->
+  <Target Name="StagingBuild" DependsOnTargets="CoreBuild">
+
+    <CallTarget Targets="UnitTests" />
+    <CallTarget Targets="FXCop" />
+    <CallTarget Targets="Documentation" />
+    <CallTarget Targets="DevBuild" />
+    <!--<CallTarget Targets="PublishToIIS" />-->
+    
+  </Target>
+
+  <Target Name="ReleaseBuild">
+    
+    <!-- Error on FxCop -->
+    <!-- Error on NCover coverage -->
+    
+    <!-- Tag using assembly version, increment minor version (v(major).(minor+1).(build).(revision) -->
+    
+  </Target>
+  
+  <!-- Need some cleaning up - dealing with NCover. -->
+  <Target Name="UnitTests">
+    
+    <!-- Grab our unit test assemblies -->
+    <ItemGroup>
+      <UnitTestAssemblies Include="$(UnitTestDir)**\bin\$(Configuration)\*.Tests.dll" />
+    </ItemGroup>
+
+    <Message Text="Unit tests to run: @(UnitTestAssemblies)" />
+    <!--<NUnit Assemblies="@(UnitTestAssemblies)" ToolPath="$(NUnitPath)" />-->
+
+    <NCover  ToolPath="$(DependencyDir)NCover\"
+             CommandLineExe="$(NUnitPath)nunit-console.exe"
+             CommandLineArgs="&quot;@(UnitTestAssemblies, '&quot; &quot;')" />
+    
+  </Target>
+  
+  <!-- Needs some cleaning up. -->
+  <Target Name="FXCop">
+
+    <!-- Project Assemblies -->
+    <ItemGroup>
+      <ProjectAssemblies Include="$(SolutionDir)**\bin\$(Configuration)\*.dll" Exclude="$(UnitTestDir)**\*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <RuleAssemblies Include="$(DependencyDir)Microsoft FxCop 1.36\Rules\*.dll" /> 
+    </ItemGroup>
+
+    <PropertyGroup>
+      <RuleAssemblyPath>$(DependencyDir)Microsoft FxCop 1.36\Rules\</RuleAssemblyPath>
+    </PropertyGroup>
+    <Message Text="Running FxCop on assemblies: @(ProjectAssemblies)" />
+    <Message Text="FxCop rules: $(RuleAssemblyPath), @(RuleAssemblies)" />
+
+    <!--Rules="Microsoft.Design#CA1012;-Microsoft.Performance#CA1805"
+    -->
+
+    <ConvertToAbsolutePath Paths="$(FxCopPath)Rules\">
+      <Output TaskParameter="AbsolutePaths" PropertyName="RulesDir"/>
+    </ConvertToAbsolutePath>
+
+    <ConvertToAbsolutePath Paths="@(ProjectAssemblies)">
+      <Output TaskParameter="AbsolutePaths" ItemName="AssemblyPaths"/>
+    </ConvertToAbsolutePath>
+    
+    <!--<FxCop
+        TargetAssemblies="$(ProjectAssemblies)"
+        RuleLibraries="@(RuleAssemblies)"
+        Rules="Microsoft.Design#CA1012;-Microsoft.Performance#CA1805"
+        AnalysisReportFileName="Test.html"
+        FailOnError="True"
+        ApplyOutXsl="False"
+        OutputXslFileName="$(FxCopReport)"
+        ToolPath="$(FxCopPath)"
+      />-->
+
+    <!--FxCopCmd.exe /file:MyAssembly.dll /rules:.\Rules /out:MyReport.xml-->
+
+    <PropertyGroup>
+      <Cmd>/file:@(AssemblyPaths, ' /file:') /directory:&quot;$(SilverlightLibraryPath)&quot; /out:..\..\FxCopReport.xml /console /rule:&quot;$(RulesDir)&quot;</Cmd>
+    </PropertyGroup>
+    <Message Text="Command: $(Cmd)" />
+    
+    <Exec WorkingDirectory="$(FxCopPath)" Command="FxCopCmd.exe $(Cmd)" />
+
+  </Target>
+
+  <Target Name="Documentation">
+
+    <!-- Project Assemblies -->
+    <ItemGroup>
+      <ProjectAssemblies Include="$(SolutionDir)**\bin\$(Configuration)\*.dll" Exclude="$(UnitTestDir)**\*" />
+    </ItemGroup>
+
+    <!-- Since the working directory is in the NDoc folder, we have to form the urls relative to that. -->
+    <RegexReplace Input="@(ProjectAssemblies)" Expression="(.*dll)" Replacement="..\..\$1 ">
+      <Output ItemName="ProjectAssemblyPaths" TaskParameter="Output" />
+    </RegexReplace>
+   
+    <!-- Map the absolute path for our NDoc executable -->
+    <ConvertToAbsolutePath Paths="$(NDocPath)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="NDocAbsolutePath"/>
+    </ConvertToAbsolutePath>
+
+    <PropertyGroup>
+      <!--<Documenter>&quot;MSDN-CHM&quot;</Documenter>
+      <OutputDirectory>..\..\Documentation\_temp\</OutputDirectory>-->
+      <Title>&quot;MyProject Documentation&quot;</Title>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <Documenter Include="&quot;MSDN-CHM&quot;">
+        <Arguments>-documenter=&quot;MSDN-CHM&quot; @(ProjectAssemblyPaths, ' ') -referencepath=&quot;$(SilverlightLibraryPath)&quot; -OutputDirectory=..\..\Documentation\_temp -Title=$(Title) -Version=&quot;$(AssemblyVersion)&quot; -HtmlHelpName=&quot;MyProject&quot;</Arguments>
+      </Documenter>
+      <Documenter Include="&quot;MSDN-Web&quot;">
+        <Arguments>-documenter=&quot;MSDN-Web&quot; @(ProjectAssemblyPaths, ' ') -referencepath=&quot;$(SilverlightLibraryPath)&quot; -OutputDirectory=..\..\Documentation\_tempweb -Title=$(Title) -Version=&quot;$(AssemblyVersion)&quot; -HtmlHelpName=&quot;MyProject&quot;</Arguments>
+      </Documenter>
+    </ItemGroup>
+
+
+    <Message Text="Documentation Project ::::::::::::::::::::::::::::::: $(ProjectFile)" />
+    <Message Text="OutputDirectory: $(OutputDirectory)" />
+    <Message Text="Arguments: $(Arguments)" />
+    <Message Text="Command: (&quot;$(NDocExe)&quot; $(Arguments))" />
+    <!--<NDoc Documenter="$(Documenter)" ProjectFilePath="$(ProjectFile)" ToolPath="$(NDocPath)" ContinueOnError="true" />
+-->
+    <Exec WorkingDirectory="$(NDocAbsolutePath)" Command="NDocConsole.exe %(Documenter.Arguments)" />
+
+    <ItemGroup>
+      <HelpFiles Include="$(DocumentationDir)_temp\*.chm" />
+      <WebHelpFiles Include="$(DocumentationDir)_tempweb\**\*.*" />
+    </ItemGroup>
+
+    <!-- Copy our help files to their final locations -->
+    <Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(BuildTempDir)doc\" />
+    <Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(DocumentationDir)" />
+    <Copy SourceFiles="@(WebHelpFiles)" DestinationFiles="@(WebHelpFiles->'$(BuildTempDir)doc\web\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <!-- Remove temporary files -->
+    <ItemGroup>
+      <FilesToDelete Include="$(DocumentationDir)_temp\**\*.*" />
+      <FilesToDelete Include="$(DocumentationDir)_tempweb\**\*.*" />
+      <DirectoriesToDelete Include="$(DocumentationDir)_temp\**\" />
+      <DirectoriesToDelete Include="$(DocumentationDir)_tempweb\**\" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+
+    <!-- Remove temporary directories -->
+    <RemoveDir Directories="$(DocumentationDir)_temp;$(DocumentationDir)_tempweb" />
+    
+  </Target>
+  
+  <Target Name="PublishToIIS">
+
+    <ConvertToAbsolutePath Paths="$(VersionFolder)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="IISPath"/>
+    </ConvertToAbsolutePath>
+    
+    <Message Text="IIS PATH:::::::::::::::::$(IISPath)" />
+
+    <PropertyGroup>
+      <Website>"Default Web Site"</Website>
+      <AppPool>DefaultAppPool</AppPool>
+    </PropertyGroup>
+
+    <!-- Check if there's an exisiting IIS app -->
+    <Exec WorkingDirectory="$(SystemRoot)\System32\inetsrv" Outputs="$(Website)" Command="appcmd list app /site.name:$(Website) /path:/v$(AssemblyVersion)/doc" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" ItemName="DocExitCode" />
+    </Exec>
+
+    <Exec WorkingDirectory="$(SystemRoot)\System32\inetsrv" Outputs="$(Website)" Command="appcmd list app /site.name:$(Website) /path:/v$(AssemblyVersion)" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" ItemName="ExitCode" />
+    </Exec>
+
+    <!-- If there's an existing virtual app, delete it -->
+    <Exec Condition="'%(DocExitCode.Identity)' == '0'" WorkingDirectory="$(SystemRoot)\System32\inetsrv" Command="appcmd delete app /app.name:$(Website)/v$(AssemblyVersion)/doc" />
+    <Exec Condition="'%(ExitCode.Identity)' == '0'" WorkingDirectory="$(SystemRoot)\System32\inetsrv" Command="appcmd delete app /app.name:$(Website)/v$(AssemblyVersion)" />
+    
+    <!-- Create a new IIS app -->
+    <Exec WorkingDirectory="$(SystemRoot)\System32\inetsrv" Command="appcmd add app /site.name:$(Website) /path:/v$(AssemblyVersion) /physicalPath:$(IISPath)www\ /applicationPool:$(AppPool)"/>
+
+    <!-- Add a virtual app that points to the web documentation -->
+    <Exec WorkingDirectory="$(SystemRoot)\System32\inetsrv" Command="appcmd add app /site.name:$(Website) /path:/v$(AssemblyVersion)/doc/ /physicalPath:$(IISPath)doc\web\ /applicationPool:$(AppPool)"/>
+
+  </Target>
+
+  <Target Name="TagRelease">
+    
+    <!-- Tag the revision in svn -->
+    
+  </Target>
+  
+</Project>
