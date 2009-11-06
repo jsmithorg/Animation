@@ -1,0 +1,85 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Exclusions Property</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">NCoverExplorer.MSBuildTasks</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">NCoverExplorer.Exclusions Property</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Coverage exclusions to apply, in one of two formats: They can be semi-colon delimited "Type=Pattern" pairs, e.g. "Assembly=*.Tests;Class=My.*". Alternatively they can be defined in a property group as a &lt;CoverageExclusions&gt; section. See the examples for both formats. If you want to use regular expressions then you must use the &lt;PropertyGroup&gt; approach. </p>
+      <div class="syntax">public <a href="ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.en/cpref2/html/T_System_String.htm"></a> Exclusions {get; set;}</div>
+      <p>
+      </p>
+      <h4 class="dtH4">Example</h4>
+      <p> This example shows a range of coverage exclusions using the &lt;PropertyGroup&gt; approach. Note the optional use of wildcard characters in the pattern. You could set the exclusions up within the gui and then paste the xml directly from the NCoverExplorer.config file located in C:\Documents and Settings\user\Application Data\Gnoso\NCoverExplorer\ <pre class="code">           
+           &lt;PropertyGroup&gt; 
+               &lt;CoverageExclusions&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Assembly&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;*.Tests&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Namespace&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyNamespace.*&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Class&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyNamespace.MyClass&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Method&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyNamespace.MyClass.MyMethod&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Namespace&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyApp\.(\w*\.)?&lt;/Pattern&gt; 
+                      &lt;IsRegex&gt;true&lt;/IsRegex&gt; 
+                  &lt;/CoverageExclusion&gt; 
+               &lt;/CoverageExclusions&gt; 
+           &lt;/PropertyGroup&gt;
+
+           &lt;NCoverExplorer ...
+                           Exclusions="$(CoverageExclusions)"
+                           ...
+           /&gt;
+           
+       </pre>
+             This example shows inlining of three of the same exclusions above. Note with this approach it is not possible to use regular expressions. <pre class="code">    
+    &lt;NCoverExplorer ...
+                    Exclusions="Assembly=*.Tests;Namespace=MyNamespace.*;Class=MyNamespace.MyClass"
+                    ...
+    /&gt;
+    
+</pre>
+            </p>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.html">NCoverExplorer Class</a> | <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks Namespace</a></p>
+      <hr />
+      <div id="footer">
+        <p>
+          <a>Copyright © 2006 Grant Drake. All rights reserved.</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

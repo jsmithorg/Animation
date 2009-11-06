@@ -1,0 +1,18 @@
+<project SchemaVersion="1.3">
+    <assemblies>
+        <assembly location="..\build\NCoverExplorer.MSBuildTasks.dll" documentation="..\build\NCoverExplorer.MSBuildTasks.xml" />
+    </assemblies>
+    <documenters>
+        <documenter name="MSDN">
+            <property name="OutputDirectory" value="..\doc\NCoverExplorer.MSBuildTasks\" />
+            <property name="HtmlHelpName" value="NCoverExplorer.MSBuildTasks Documentation" />
+            <property name="Title" value="NCoverExplorer.MSBuildTasks" />
+            <property name="OutputTarget" value="Web" />
+            <property name="DocumentInheritedMembers" value="False" />
+            <property name="DocumentInheritedFrameworkMembers" value="False" />
+            <property name="DocumentProtected" value="False" />
+            <property name="CopyrightText" value="Copyright © 2006 Grant Drake. All rights reserved." />
+            <property name="CleanIntermediates" value="True" />
+        </documenter>
+    </documenters>
+</project>

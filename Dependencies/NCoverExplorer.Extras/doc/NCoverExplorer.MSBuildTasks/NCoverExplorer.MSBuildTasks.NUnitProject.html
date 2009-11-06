@@ -1,0 +1,90 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>NUnitProject Class</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">NCoverExplorer.MSBuildTasks</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">NUnitProject Class</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Create a .nunit project file for all the test assemblies matching the specified pattern. This should be created in the bin folder where your test assemblies are located so that the assemblies are within the AppDomain path. The .nunit file can then be used by NUnit or NCover based tasks. </p>
+      <p>For a list of all members of this type, see <a href="NCoverExplorer.MSBuildTasks.NUnitProjectMembers.html">NUnitProject Members</a>.</p>
+      <p>
+        <a href="ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.en/cpref2/html/T_System_Object.htm">System.Object</a>
+        <br />   Task<br />      <b>NUnitProject</b></p>
+      <div class="syntax">
+        <div>public class NUnitProject<b> : Task</b></div>
+      </div>
+      <H4 class="dtH4">Thread Safety</H4>
+      <P>Public static (<b>Shared</b> in Visual Basic) members of this type are 
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be 
+				thread-safe.</P>
+      <h4 class="dtH4">Example</h4>
+      <p>
+               <p> Create a .nunit project file in output bin folder for a specified test assembly. </p>
+               <pre class="code">     
+ &lt;UsingTask TaskName="NCoverExplorer.MSBuildTasks.NUnitProject" 
+            AssemblyFile="NCoverExplorer.MSBuildTasks.dll"/&gt;
+ &lt;PropertyGroup&gt;
+    &lt;OutputPath&gt;$(MSBuildProjectDirectory)\Build&lt;/OutputPath&gt;
+ &lt;/PropertyGroup&gt;
+
+    &lt;ItemGroup&gt;
+       &lt;Assembly Include="$(OutputPath)\MyApp.Tests.dll" /&gt;
+    &lt;/ItemGroup&gt;
+ 
+ &lt;NUnitProject   Project="$(OutputPath)\MyApp.nunit" 
+                 Assemblies="@(Assembly)" /&gt;
+     
+   </pre>
+             
+               <p> Create a .nunit project file in output bin folder with an associated App.Config file for all test assemblies matching a pattern. </p>
+               <pre class="code">    
+   &lt;ItemGroup&gt;
+      &lt;Assembly Include="$(OutputPath)\MyApp.*.Tests.dll" /&gt;
+   &lt;/ItemGroup&gt;
+
+&lt;NUnitProject   Project="$(OutputPath)\MyApp.nunit" 
+                AppConfig="$(OutputPath)\MyApp.exe.config"
+                Assemblies="@(Assembly)" /&gt;
+    
+  </pre>
+             </p>
+      <h4 class="dtH4">Requirements</h4>
+      <p>
+        <b>Namespace: </b>
+        <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks</a>
+      </p>
+      <p>
+        <b>Assembly: </b>NCoverExplorer.MSBuildTasks (in NCoverExplorer.MSBuildTasks.dll)
+					</p>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="NCoverExplorer.MSBuildTasks.NUnitProjectMembers.html">NUnitProject Members</a> | <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks Namespace</a></p>
+      <hr />
+      <div id="footer">
+        <p>
+          <a>Copyright © 2006 Grant Drake. All rights reserved.</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

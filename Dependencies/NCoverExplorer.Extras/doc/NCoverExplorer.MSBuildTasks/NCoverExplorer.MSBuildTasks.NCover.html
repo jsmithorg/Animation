@@ -1,0 +1,105 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>NCover Class</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">NCoverExplorer.MSBuildTasks</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">NCover Class</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> MSBuild task for automating NCover.Console.exe, with NCover 1.5.x support. Note that this task will self register CoverLib.dll by default using the registry (does not require local admin). </p>
+      <p>For a list of all members of this type, see <a href="NCoverExplorer.MSBuildTasks.NCoverMembers.html">NCover Members</a>.</p>
+      <p>
+        <a href="ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.en/cpref2/html/T_System_Object.htm">System.Object</a>
+        <br />   Task<br />      ToolTask<br />         <b>NCover</b></p>
+      <div class="syntax">
+        <div>public class NCover<b> : ToolTask</b></div>
+      </div>
+      <H4 class="dtH4">Thread Safety</H4>
+      <P>Public static (<b>Shared</b> in Visual Basic) members of this type are 
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be 
+				thread-safe.</P>
+      <h4 class="dtH4">Example</h4>
+      <p> This example shows the standard profiling using NCover for standard nunit tests with minimal arguments. Defaults are with logging to coverage.log, profiling all assemblies, output filename of coverage.xml and this example specifies a path to where to find ncover.console.exe. <pre class="code">    
+    &lt;NCover  ToolPath="Tool\NCover\"
+             CommandLineExe="$(nunit.path)\nunit-console.exe" 
+             CommandLineArgs="$(MSBuildProjectDirectory)\myapp.tests.dll" /&gt;
+    
+</pre>
+             If you are using TypeMock, you may experience issues with the registration of coverlib.dll conflicting due to overwriting the registered profiler. You should add the "registerProfiler" attribute below and set it to false. <pre class="code">    
+    &lt;NCover  ToolPath="Tool\NCover\"
+             CommandLineExe="$(nunit.path)\nunit-console.exe" 
+             CommandLineArgs="$(MSBuildProjectDirectory)\myapp.tests.dll"
+             RegisterProfiler="false" /&gt;
+    
+</pre>
+             This example for NCover 1.5.8 shows profiling a process which is launched by another process. <pre class="code">           
+
+           &lt;NCover  ToolPath="Tool\NCover\"
+                    CommandLineExe="MyLauncher.exe" 
+                    ProfiledProcessModule="LaunchedProcess.exe" /&gt;
+           
+       </pre>
+             This example shows using an assembly list as ; delimited names rather than using the ability of the NCover task to dynamically build from a list of files (shown in following example). <pre class="code">           
+
+           &lt;NCover  ToolPath="Tool\NCover\"
+                    CommandLineExe="$(nunit.path)\nunit-console.exe" 
+                    CommandLineArgs="$(MSBuildProjectDirectory)\myapp.tests.dll"
+                    AssemblyList="MyApp.Core;MyApp.Tests" /&gt;
+           
+       </pre>
+             This example shows the standard profiling using NCover 1.5.x for a Windows application, specifying a coverage exclusion, verbose logging to a named file, specifically named log and output xml files. It also shows coverage exclusion attributes, overriding the NCover location to run from and a way of listing assemblies to be included in the profiled NCover results. <pre class="code">           
+           &lt;ItemGroup&gt;
+               &lt;Assembly Include="$(MSBuildProjectDirectory)\MyApp.MyCode.dll" /&gt;
+           &lt;/ItemGroup&gt;
+
+           &lt;NCover  ToolPath="Tool\NCover\"
+                    CommandLineExe="$(nunit.path)\nunit-console.exe" 
+                    CommandLineArgs="myapp.tests.dll"
+                    CoverageFile="myapp.coverage.xml"
+                    LogLevel="Verbose"
+                    LogFile="myapp.coverage.log"
+                    WorkingDirectory="$(MSBuildProjectDirectory)"
+                    ExcludeAttributes="CoverageExcludeAttribute"
+                    Assemblies="@(Assembly)" /&gt;
+           
+       </pre>
+            </p>
+      <h4 class="dtH4">Requirements</h4>
+      <p>
+        <b>Namespace: </b>
+        <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks</a>
+      </p>
+      <p>
+        <b>Assembly: </b>NCoverExplorer.MSBuildTasks (in NCoverExplorer.MSBuildTasks.dll)
+					</p>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="NCoverExplorer.MSBuildTasks.NCoverMembers.html">NCover Members</a> | <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks Namespace</a></p>
+      <hr />
+      <div id="footer">
+        <p>
+          <a>Copyright © 2006 Grant Drake. All rights reserved.</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

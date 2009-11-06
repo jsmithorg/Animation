@@ -1,0 +1,20 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean />
+  </SettingsComponent>
+  <RecentFilesTracker>
+    <RecentFilesTracker>
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\TaskReleaseNotes.html" offset="1262" line="40" column="0" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\NCoverExplorer.NAntTasks\NCoverTask.cs" offset="13576" line="340" column="0" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\NCoverExplorer.NAntTasks\NCoverExplorerTask.cs" offset="1594" line="1" column="0" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\NCoverExplorer.NAntTasks\AssemblyInfo.cs" offset="389" line="-1" column="-1" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\Common\PathSearch.cs" offset="2353" line="0" column="0" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\Common\NCoverUtilities.cs" offset="2993" line="47" column="0" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\Common\Enumerations.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="E:\Dev\KiwiDevelopment\NCoverExplorer\trunk\src\Extras\NCoverExplorer.NAntTasks\NUnitProjectTask.cs" offset="0" line="-1" column="-1" />
+    </RecentFilesTracker>
+  </RecentFilesTracker>
+  <CompletionStatisticsManager />
+</Configuration>

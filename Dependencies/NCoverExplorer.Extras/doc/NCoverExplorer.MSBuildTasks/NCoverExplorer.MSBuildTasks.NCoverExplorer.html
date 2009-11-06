@@ -1,0 +1,190 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>NCoverExplorer Class</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">NCoverExplorer.MSBuildTasks</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">NCoverExplorer Class</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> MSBuild task for automating NCoverExplorer.Console. Using this task you can merge coverage files from NCover, produce xml coverage reports for use with CruiseControl.Net, produce html report files directly, fail automated builds if coverage thresholds are not met and apply a range of detail to the reports produced such as sorting, filtering and coverage exclusions. </p>
+      <p>For a list of all members of this type, see <a href="NCoverExplorer.MSBuildTasks.NCoverExplorerMembers.html">NCoverExplorer Members</a>.</p>
+      <p>
+        <a href="ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.en/cpref2/html/T_System_Object.htm">System.Object</a>
+        <br />   Task<br />      ToolTask<br />         <b>NCoverExplorer</b></p>
+      <div class="syntax">
+        <div>public class NCoverExplorer<b> : ToolTask</b></div>
+      </div>
+      <H4 class="dtH4">Thread Safety</H4>
+      <P>Public static (<b>Shared</b> in Visual Basic) members of this type are 
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be 
+				thread-safe.</P>
+      <h4 class="dtH4">Example</h4>
+      <p> This example shows producing an xml coverage report at Module/Namespace/Class detail level for inclusion on a CC.Net build server. You would add a merge file task in the publishers section of your CC.Net project file to merge in this "CoverageSummary.xml" file so that it can be transformed by the NCoverExplorer xsl stylesheets you have copied into the CC.Net folder. Here we have set a satisfactory coverage threshold at 80%. <pre class="code">           
+           &lt;ItemGroup&gt;
+               &lt;CoverageFile Include="$(MSBuildProjectDirectory)\Coverage\Coverage.xml" /&gt;
+           &lt;/ItemGroup&gt;
+
+           &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                           ProjectName="My Project"
+                           OutputDir="$(MSBuildProjectDirectory)\Coverage"
+                           CoverageFiles="@(CoverageFile)"
+                           SatisfactoryCoverage="80"
+                           ReportType="4"
+                           XmlReportName="CoverageSummary.xml"
+           /&gt;
+           
+       </pre>
+             This example shows producing an html function coverage report, excluding the test assemblies. The assemblies excluded are being displayed at the bottom of the report. Note also that this time the ReportType is specified by its enum name rather than numeric value - they are interchangable. We have also "inlined" the "CoverageFiles" from the ItemGroup above to show this can be done. <pre class="code">           
+           &lt;PropertyGroup&gt; 
+               &lt;CoverageExclusions&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Assembly&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;*.Tests&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+               &lt;/CoverageExclusions&gt; 
+           &lt;/PropertyGroup&gt;
+
+           &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                           ProjectName="My Project"
+                           OutputDir="$(MSBuildProjectDirectory)\Coverage"
+                           CoverageFiles="$(MSBuildProjectDirectory)\Coverage\Coverage.xml"
+                           SatisfactoryCoverage="80"
+                           ReportType="ModuleClassFunctionSummary"
+                           HtmlReportName="CoverageSummary.html"
+                           Exclusions="$(CoverageExclusions)"
+                           ShowExcluded="True"
+           /&gt;
+           
+       </pre>
+             This example shows producing an html module class summary coverage report with exclusions as above. This time we have added applying specific sorting and filtering criteria. This report will show all classes that do not have 100% coverage, sorted within their namespaces by descending coverage %. We have also "inlined" the exclusions <pre class="code">    
+    &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                    ProjectName="My Project"
+                    OutputDir="$(MSBuildProjectDirectory)\Coverage"
+                    CoverageFiles="$(MSBuildProjectDirectory)\Coverage\Coverage.xml"
+                    SatisfactoryCoverage="80"
+                    ReportType="ModuleClassSummary"
+                    HtmlReportName="CoverageSummary.html"
+                    Exclusions="Assembly=*.Tests;"
+                    ShowExcluded="True"
+                    Sort="CoveragePercentageDescending"
+                    Filter="HideFullyCovered"
+    /&gt;
+    
+</pre>
+             This example shows the merging capability to produce a consolidated merge file from multiple coverage test runs. The results are being stored in a single "MyApp.CoverageMerged.xml" file. Note that you could additionally apply coverage exclusions at this point. Merging files can be useful if your testing process requires multiple coverage runs and you want a single archive which consolidates the results. <pre class="code">           
+           &lt;ItemGroup&gt;
+               &lt;CoverageFile Include="$(MSBuildProjectDirectory)\Coverage\MyApp*.Coverage.xml" /&gt;
+           &lt;/ItemGroup&gt;
+
+           &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                           OutputDir="$(MSBuildProjectDirectory)\Coverage"
+                           ReportType="None"
+                           CoverageFiles="@(CoverageFile)"
+                           MergeFileName="MyApp.CoverageMerged.xml"
+           /&gt;
+           
+       </pre>
+             This example shows failing a build if the overall coverage % does not meet our threshold, without producing a coverage report. <pre class="code">    
+    &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                    ProjectName="My Project"
+                    ReportType="None"
+                    CoverageFiles="$(MSBuildProjectDirectory)\Coverage\Coverage.xml"
+                    MinimumCoverage="80"
+                    FailMinimum="True"
+    /&gt;
+    
+</pre>
+             This example shows failing a build if either the overall coverage % does not meet our threshold, or if one of the individual module thresholds is not met. Note that the ModuleThresholds could have been "inlined" (just showing the MSBuild flexibility to place in a separate group). <pre class="code">           
+           &lt;ItemGroup&gt;
+               &lt;ModuleThreshold Include="MyProject.1.dll=75" /&gt;
+               &lt;ModuleThreshold Include="MyProject.2.dll=85" /&gt;
+           &lt;/ItemGroup&gt;
+
+           &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                           ProjectName="My Project"
+                           ReportType="None"
+                           CoverageFiles="$(MSBuildProjectDirectory)\Coverage\Coverage.xml"
+                           MinimumCoverage="80"
+                           FailMinimum="True"
+                           ModuleThresholds="@(ModuleThreshold)"
+           /&gt;
+           
+       </pre>
+             This example shows using virtually the whole range of attributes. Shown below is failing a build if not reaching the overall or module level coverage thresholds. The results of merging multiple NCover files together are stored as a separate file. We are producing xml and html Namespace per module summary reports (with the exclusions show in the footer). Note that the module thresholds will also be used in the reports. The reports are sorted by name with no filter applied. We are excluding test assemblies and anything in a presentation layer namespace. <pre class="code">           
+           &lt;ItemGroup&gt;
+               &lt;CoverageFile Include="$(MSBuildProjectDirectory)\Test\Coverage\*.Coverage.xml" /&gt;
+           &lt;/ItemGroup&gt;
+
+           &lt;PropertyGroup&gt; 
+               &lt;CoverageExclusions&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Class&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyApp.SomeNamespace.SomeClass&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+                  &lt;CoverageExclusion&gt;
+                      &lt;ExclusionType&gt;Namespace&lt;/ExclusionType&gt;
+                      &lt;Pattern&gt;MyApp\.(\w*\.)?&lt;/Pattern&gt; 
+                      &lt;Pattern&gt;true&lt;/Pattern&gt; 
+                  &lt;/CoverageExclusion&gt; 
+               &lt;/CoverageExclusions&gt; 
+           &lt;/PropertyGroup&gt;
+
+           &lt;NCoverExplorer ToolPath="Tools\NCoverExplorer\"
+                           ProjectName="My Project" 
+                           ReportType="ModuleNamespaceSummary"
+                           Sort="Name"
+                           Filter="None"
+                           OutputDir="$(MSBuildProjectDirectory)\Test\Coverage"
+                           XmlReportName="CoverageSummary.xml"
+                           HtmlReportName="CoverageSummary.html"
+                           MergeFileName="CoverageMerge.xml"
+                           ShowExcluded="True"
+                           SatisfactoryCoverage="80"
+                           MinimumCoverage="80"
+                           FailMinimum="True"
+                           CoverageFiles="@(CoverageFile)"
+                           Exclusions="$(CoverageExclusions)"
+                           ModuleThresholds="MyProject.1.dll=75;MyProject.2.dll=85"
+           /&gt;
+           
+       </pre>
+            </p>
+      <h4 class="dtH4">Requirements</h4>
+      <p>
+        <b>Namespace: </b>
+        <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks</a>
+      </p>
+      <p>
+        <b>Assembly: </b>NCoverExplorer.MSBuildTasks (in NCoverExplorer.MSBuildTasks.dll)
+					</p>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="NCoverExplorer.MSBuildTasks.NCoverExplorerMembers.html">NCoverExplorer Members</a> | <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks Namespace</a></p>
+      <hr />
+      <div id="footer">
+        <p>
+          <a>Copyright © 2006 Grant Drake. All rights reserved.</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

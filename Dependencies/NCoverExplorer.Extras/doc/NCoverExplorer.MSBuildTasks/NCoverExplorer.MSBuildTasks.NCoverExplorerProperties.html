@@ -1,0 +1,61 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>NCoverExplorer Properties</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">NCoverExplorer.MSBuildTasks</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">NCoverExplorer Properties</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p>The properties of the <b>NCoverExplorer</b> class are listed below. For a complete list of <b>NCoverExplorer</b> class members, see the <a href="NCoverExplorer.MSBuildTasks.NCoverExplorerMembers.html">NCoverExplorer Members</a> topic.</p>
+      <h4 class="dtH4">Public Instance Properties</h4>
+      <div class="tablediv">
+        <table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.ConfigName.html">ConfigName</a></td><td width="50%"> Gets or sets the name of the temporary XML config file being generated for coverage. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.CoverageFiles.html">CoverageFiles</a></td><td width="50%"> Used to select the coverage xml files to merge into the report. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.Exclusions.html">Exclusions</a></td><td width="50%"> Coverage exclusions to apply, in one of two formats: They can be semi-colon delimited "Type=Pattern" pairs, e.g. "Assembly=*.Tests;Class=My.*". Alternatively they can be defined in a property group as a &lt;CoverageExclusions&gt; section. See the examples for both formats. If you want to use regular expressions then you must use the &lt;PropertyGroup&gt; approach. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.FailCombinedMinimum.html">FailCombinedMinimum</a></td><td width="50%"> Whether to fail the task if the minimumCoverage threshold is not reached on total coverage. NCoverExplorer console application will return exit code 3. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.FailMinimum.html">FailMinimum</a></td><td width="50%"> Whether to fail the task if the minimumCoverage threshold is not reached on any module. NCoverExplorer console application will return exit code 3. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.Filter.html">Filter</a></td><td width="50%"> The filtering if any to apply (use numeric value or string name). 0 / None, 1 / HideUnvisited, 2 / HideFullyCovered, 3 / HideThresholdCovered </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.HtmlReportName.html">HtmlReportName</a></td><td width="50%"> The filename for generating an html report. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.MergeFileName.html">MergeFileName</a></td><td width="50%"> The filename for the merge of the coverage xml files. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.MinimumCoverage.html">MinimumCoverage</a></td><td width="50%"> The minimum coverage percentage to be used with the FailMinimum and FailCombinedMinimum options. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.ModuleThresholds.html">ModuleThresholds</a></td><td width="50%"> Module thresholds to apply, in format "AssemblyName=Percentage", e.g. "MyApp.Core=75" </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.OutputDir.html">OutputDir</a></td><td width="50%"> Gets or sets the output directory for the reports. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.ProjectName.html">ProjectName</a></td><td width="50%"> The .config filename for containing any custom exclusions and parameters. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.ReportType.html">ReportType</a></td><td width="50%"> The type of report to produce (use numeric value or string name). 0 / None, 1 / ModuleSummary, 3 / ModuleNamespaceSummary, 4 / ModuleClassSummary, 5 / ModuleClassFunctionSummary </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.SatisfactoryCoverage.html">SatisfactoryCoverage</a></td><td width="50%"> The satisfactory coverage percentage for display in the reports. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.ShowExcluded.html">ShowExcluded</a></td><td width="50%"> Determines whether to include the coverage exclusions in the report. The default is <b>true</b>. </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.Sort.html">Sort</a></td><td width="50%"> The sorting if any to apply (use numeric value or string name). 0 / Name, 1 / ClassLine, 2 / CoveragePercentageAscending, 3 / CoveragePercentageDescending, 4 / UnvisitedSequencePointsAscending, 5 / UnvisitedSequencePointsDescending, 6 / VisitCountAscending, 7 / VisitCountDescending, 8 / FunctionCoverageAscending, 9 / FunctionCoverageDescending </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"></img><a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.XmlReportName.html">XmlReportName</a></td><td width="50%"> The filename for generating an xml report. </td></tr></table>
+      </div>
+      <h4 class="dtH4">See Also</h4>
+      <p>
+        <a href="NCoverExplorer.MSBuildTasks.NCoverExplorer.html">NCoverExplorer Class</a> | <a href="NCoverExplorer.MSBuildTasks.html">NCoverExplorer.MSBuildTasks Namespace</a></p>
+      <hr />
+      <div id="footer">
+        <p>
+          <a>Copyright © 2006 Grant Drake. All rights reserved.</a>
+        </p>
+        <p>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="NCoverExplorer.Tasks" default="all" xmlns="http://nant.sf.net/schemas/nant.xsd">
+	<description>Build the NAnt and MSBuild tasks for NCover/NCoverExplorer and their documentation.</description>
+
+	<property name="build.nanttasks.name" 			value="NCoverExplorer.NAntTasks" />
+	<property name="build.msbuildtasks.name" 		value="NCoverExplorer.MSBuildTasks" />
+	<property name="build.configuration" 			value="Debug" />
+	<property name="build.output.path" 				value="${project::get-base-directory()}\build" />
+	<property name="build.release.prefix" 			value="E:\Dev\NCoverExplorer\Versions\v" overwrite="false" />
+	<property name="build.zip.prefix" 				value="${build.output.path}\NCoverExplorer.Extras-" />
+	<property name="doc.includes.path" 				value="${project::get-base-directory()}\doc\NAntTemplate" />
+	<property name="doc.output.nant.path" 			value="${project::get-base-directory()}\doc\${build.nanttasks.name}" />
+	<property name="doc.output.msbuild.path" 		value="${project::get-base-directory()}\doc\${build.msbuildtasks.name}" />
+	<property name="ndoc2005.console.path" 			value="${project::get-base-directory()}\..\..\tools\NDoc2005\NDocConsole.exe" />
+	<property name="ndoc2005.config" 				value="${project::get-base-directory()}\${build.msbuildtasks.name}\${build.msbuildtasks.name}.ndoc" />
+	
+	<!-- Build Build tasks and documentation -->
+	<target name="all" depends="clean, buildNAntTasks, buildMSBuildTasks, docNAntTasks, docMSBuildTasks, package" />
+
+	<!-- Build the specified C# solution file. -->
+	<target name="build" depends="buildNAntTasks, buildMSBuildTasks" description="Build NAnt and MSBuild tasks" />
+
+	<!-- Build the NAnt tasks. -->
+	<target name="buildNAntTasks" description="Build NAnt tasks">
+		<property name="nant.settings.currentframework" value="net-1.1" />
+		<solution configuration="${build.configuration}" 
+				  outputdir="${build.output.path}"
+				  verbose="false" 
+				  solutionfile="${build.nanttasks.name}\${build.nanttasks.name}.sln" />
+	</target>
+
+	<!-- Build the MSBuild tasks. -->
+	<target name="buildMSBuildTasks" description="Build MSBuild tasks">
+	<property name="nant.settings.currentframework" value="net-2.0" />
+		<msbuild project="${build.msbuildtasks.name}\${build.msbuildtasks.name}.csproj">
+             <arg value="/property:OutputPath=${build.output.path}" />
+             <arg value="/t:Rebuild" />
+ 		</msbuild>
+	</target>
+     
+    <!-- Clean the output of the current build configuration -->
+    <target name="clean" description="Cleans up the build output folder.">
+        <delete dir="${doc.output.nant.path}" if="${directory::exists(doc.output.nant.path)}" />
+        <delete dir="${doc.output.msbuild.path}" if="${directory::exists(doc.output.msbuild.path)}" />
+    </target>
+
+     <!-- Build NAnt task documentation -->
+    <target name="docNAntTasks" description="Build NAnt style documentation.">
+		<!-- Read the version information for the assembly -->
+		<call target="util.get.version"/>
+        <!-- ensure NAnt documenter exists -->
+        <if test="${not file::exists(path::combine(nant::get-base-directory(), 'NDoc.Documenter.NAnt.dll'))}">
+            <fail message="NDoc.Documenter.NAnt.dll not found in path: ${nant::get-base-directory()}" />
+        </if>
+        <!-- Set NAnt base uri for linking to NAnt docs -->
+        <property name="nant.base.uri" value="http://nant.sourceforge.net/release/latest/help/" 
+			unless="${property::exists('nant.base.uri')}" />
+		<!-- Compile the documentation -->
+        <ndoc>
+            <assemblies basedir="${build.output.path}" failonempty="true">
+                <include name="${build.nanttasks.name}.dll" />
+                <!-- 
+                    we need to add the NAnt.Core assembly too in order to provide
+                    doc summaries and add links to NAnt types and tasks
+                -->
+                <include name="NAnt.Core.dll" />
+            </assemblies>
+            <documenters>
+                <documenter name="NAnt">
+                    <property name="OutputDirectory" value="${doc.output.nant.path}" />
+                    <property name="SdkDocVersion" value="SDK_v1_1" />
+                    <property name="SdkLinksOnWeb" value="False" />
+                    <!-- set base uri used for linking to NAnt docs -->
+                    <property name="NAntBaseUri" value="${nant.base.uri}" />
+                    <!-- only document our own tasks namespace -->
+                    <property name="NamespaceFilter" value="NCoverExplorer" />
+                    <!-- set the name and version of the product for which docs are generated -->
+                    <property name="ProductName" value="${build.nanttasks.name}" />
+                    <property name="ProductVersion" value="${build.version.number}" />
+                    <property name="Preliminary" value="False" />
+                    <property name="DocumentAttributes" value="True" />
+                    <property name="IncludeAssemblyVersion" value="True" />
+                    <property name="ShowMissingParams" value="True" />
+                    <property name="ShowMissingReturns" value="True" />
+                    <property name="ShowMissingValues" value="True" />
+                </documenter>
+            </documenters>
+        </ndoc>
+
+        <!-- copy the html page injecting the NAnt version. -->
+        <copy todir="${doc.output.nant.path}" overwrite="true">
+            <fileset basedir="${doc.includes.path}">
+                <include name="**/*.html" />
+            </fileset>
+            <filterchain>
+                <replacetokens>
+                    <token key="PRODUCT_VERSION" value="${build.version.number}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <!-- copy images and stylesheet so we can have it look right -->
+        <copy todir="${doc.output.nant.path}">
+            <fileset basedir="${doc.includes.path}">
+                <include name="**/*" />
+                 <!-- exclude static html pages as these will be filter-copied -->
+                <exclude name="**/*.html" />
+           </fileset>
+        </copy>
+    </target>
+
+	<!-- Build the MSBuild tasks. -->
+	<target name="docMSBuildTasks" description="Build MSBuild task documentation">
+		<exec program="${ndoc2005.console.path}">
+             <arg value="-project=${ndoc2005.config}" />
+ 		</exec>
+	</target>
+	
+	<!-- Package up for distribution -->
+	<target name="package" description="Build the complete zip file for distribution of NCoverExplorer.Extras" depends="util.get.version">
+		<property name="package.dir" value="${build.output.path}\NCoverExplorer.Extras" />
+		<delete dir="${package.dir}" if="${directory::exists(package.dir)}" />
+		<mkdir dir="${package.dir}" />
+		<mkdir dir="${package.dir}\bin" />
+		<copy todir="${package.dir}\bin">
+			<fileset basedir="${build.output.path}">
+				<include name="NCoverExplorer*.dll" />
+				<include name="NCoverExplorer*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${package.dir}" >
+			<fileset basedir=".">
+				<include name="**/*.*" />
+				<exclude name="build/**" />
+				<exclude name=".svn/**" />
+				<exclude name="**/*.svn" />
+				<exclude name="**/*.user" />
+				<exclude name="**/*.suo" />
+				<exclude name="**/bin/**" />
+				<exclude name="**/obj/**" />
+			</fileset>
+		</copy>
+		<!-- Zip up the contents -->
+		<zip zipfile="${build.zip.prefix + build.version.number}.zip">
+			<fileset basedir="${build.output.path}">
+				<include name="${package.dir}\**\*" />
+			</fileset>
+		</zip>
+		<!-- Clean up afterwards -->
+		<delete dir="${package.dir}" failonerror="false" />
+		<delete>
+			<fileset basedir="${build.output.path}">
+				<include name="log4net.dll" />
+				<include name="NAnt.*" />
+				<include name="*.pdb" />
+			</fileset>
+		</delete>
+		<!-- Make sure the archive directory exists -->
+		<mkdir dir="${build.release.prefix}${versionShort}" unless="${directory::exists(build.release.prefix + versionShort)}" />
+		<!-- Deploy the zip to the archive folder -->
+		<copy file="${build.zip.prefix + build.version.number}.zip" todir="${build.release.prefix}${versionShort}" overwrite="true" verbose="true" />
+	</target>
+	
+	<target name="util.get.version" description="Get the version number from the NAntTasks dll">
+		<property name="build.assembly.filename" value="${build.output.path}\${build.nanttasks.name}.dll" />
+		<property name="build.version.number" value="${fileversioninfo::get-file-version(fileversioninfo::get-version-info(build.assembly.filename))}" />
+		<regex pattern="^(?'versionShort'\d+\.\d+\.\d+)\.\d+$" input="${build.version.number}" />
+		<echo message="Version: ${build.version.number} - Short: ${versionShort}"/>
+	</target>
+  
+</project>

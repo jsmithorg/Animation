@@ -1,0 +1,3 @@
+nant all
+@ECHO OFF
+IF ERRORLEVEL = 1 PAUSE

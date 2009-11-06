@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCoverExplorer.NAntTasks", "NCoverExplorer.NAntTasks.csproj", "{0CC426E4-AEF2-4C35-9947-B7025FDB3B51}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{0CC426E4-AEF2-4C35-9947-B7025FDB3B51}.Debug.ActiveCfg = Debug|.NET
+		{0CC426E4-AEF2-4C35-9947-B7025FDB3B51}.Debug.Build.0 = Debug|.NET
+		{0CC426E4-AEF2-4C35-9947-B7025FDB3B51}.Release.ActiveCfg = Release|.NET
+		{0CC426E4-AEF2-4C35-9947-B7025FDB3B51}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		..\NCoverExplorer.Tasks.build = ..\NCoverExplorer.Tasks.build
+		..\TaskReleaseNotes.html = ..\TaskReleaseNotes.html
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
