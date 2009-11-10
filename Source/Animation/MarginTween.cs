@@ -33,34 +33,6 @@ namespace JSmith.Animation
         {
             ((FrameworkElement)Target).Margin = GetNewValue();
 
-            /*for (int i = 0; i < Properties.Count; i++)
-            {
-                TweenProperty p = Properties[i];
-
-                try
-                {
-                    //Properties[i].SetValue(Target, newValue, null);
-
-                    if (p.Property is string)
-                        SetProperty((string)p.Property, newValue);
-                    else if (p.Property is DependencyProperty)
-                        SetProperty((DependencyProperty)p.Property, newValue);
-                }
-                catch (TweenException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("prop: " + (Properties[i] == null) + ", ex: " + ex);
-
-                    throw new TweenException("Property \"" + p.GetType().Name + "\" could not be set for object \"" + Target.GetType().Name + "\".", ex);
-
-                }//end try
-
-            }//end for
-            */
-
             CheckTweenComplete();
 
         }//end method
@@ -71,13 +43,40 @@ namespace JSmith.Animation
             double percentage = -timeDiff / Duration.TimeSpan.TotalMilliseconds;
 
             double newPercentage = EasingFunction.Ease(percentage);
-            return new Thickness
+            double difference = GetDifference(_startMargin.Left, _endMargin.Left);
+
+            Thickness newMargin = new Thickness
             {
-                Left = (_endMargin.Left * newPercentage) + _startMargin.Left,
-                Right = (_endMargin.Right * newPercentage) + _startMargin.Right,
-                Top = (_endMargin.Top * newPercentage) + _startMargin.Top,
-                Bottom = (_endMargin.Bottom * newPercentage) + _startMargin.Bottom
+                Left = (_startMargin.Left + (GetDifference(_startMargin.Left, _endMargin.Left) * newPercentage)),
+                Right = (_startMargin.Right + (GetDifference(_startMargin.Right, _endMargin.Right) * newPercentage)),
+                Top = (_startMargin.Top + (GetDifference(_startMargin.Top, _endMargin.Top) * newPercentage)),
+                Bottom = (_startMargin.Bottom + (GetDifference(_startMargin.Bottom, _endMargin.Bottom) * newPercentage))
             };
+
+            return newMargin;
+
+        }//end method
+
+        protected double GetDifference(double startValue, double endValue)
+        {
+            double newStartValue = startValue;
+            double newEndValue = endValue;
+
+            //if one of the numbers is less than 0, normalize to 0
+            if (startValue < 0)
+            {
+                newStartValue += -startValue;
+                newEndValue += -startValue;
+
+            }
+            else if (endValue < 0)
+            {
+                newStartValue += -endValue;
+                newEndValue += -endValue;
+
+            }//end if
+
+            return endValue - startValue;
 
         }//end method
 
