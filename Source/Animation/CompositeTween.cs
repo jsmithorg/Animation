@@ -14,12 +14,15 @@ namespace JSmith.Animation
 {
     public class CompositeTween : CompoundTween
     {
+        private int _tweensComplete;
+
         public sealed override void Begin()
         {
             base.Begin();
 
             foreach (ITween tween in Tweens)
             {
+                tween.Complete += new TweenEventHandler(Tween_Complete);
                 tween.BeginTime = BeginTime;
                 tween.Begin();
 
@@ -31,6 +34,17 @@ namespace JSmith.Animation
             sb.Begin();
             */
             
+        }//end method
+
+        private void Tween_Complete(object sender, TweenEventArgs e)
+        {
+            ((ITween)sender).Complete -= new TweenEventHandler(Tween_Complete);
+
+            _tweensComplete++;
+
+            if (_tweensComplete >= Tweens.Count)
+                OnComplete();
+
         }//end method
 
         /*private void sb_Completed(object sender, EventArgs e)
