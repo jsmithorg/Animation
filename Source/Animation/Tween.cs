@@ -121,7 +121,7 @@ namespace JSmith.Animation
 
             //EaseType = easeType;
             StartValue = startValue;
-            EndValue = endValue - startValue;
+            EndValue = endValue;
             Duration = duration;
 
         }//end constructor
@@ -145,7 +145,7 @@ namespace JSmith.Animation
             
             //EaseType = easeType;
             StartValue = startValue;
-            EndValue = endValue - startValue;
+            EndValue = endValue;
             Duration = duration;
 
         }//end constructor
@@ -170,7 +170,7 @@ namespace JSmith.Animation
 
             //EaseType = easeType;
             StartValue = startValue;
-            EndValue = endValue - startValue;
+            EndValue = endValue;
             Duration = duration;
 
         }//end constructor
@@ -308,7 +308,51 @@ namespace JSmith.Animation
             double percentage = -timeDiff / Duration.TimeSpan.TotalMilliseconds;
 
             double newPercentage = EasingFunction.Ease(percentage);
+            //double difference = GetDifference(StartValue, EndValue);
+
+            double newValue = StartValue + (GetDifference(StartValue, EndValue) * newPercentage);
+
+            if (EndValue > StartValue && newValue > EndValue)
+                newValue = EndValue;
+
+            if (EndValue < StartValue && newValue < EndValue)
+                newValue = EndValue;
+
+            return newValue;
+
+        }//end method
+
+        /*protected double GetNewValue()
+        {
+            double timeDiff = startTime.Subtract(DateTime.Now).TotalMilliseconds;
+            double percentage = -timeDiff / Duration.TimeSpan.TotalMilliseconds;
+
+            double newPercentage = EasingFunction.Ease(percentage);
             return (EndValue * newPercentage) + StartValue;
+
+        }//end method
+        */
+
+        protected double GetDifference(double startValue, double endValue)
+        {
+            double newStartValue = startValue;
+            double newEndValue = endValue;
+
+            //if one of the numbers is less than 0, normalize to 0
+            if (startValue < 0)
+            {
+                newStartValue += -startValue;
+                newEndValue += -startValue;
+
+            }
+            else if (endValue < 0)
+            {
+                newStartValue += -endValue;
+                newEndValue += -endValue;
+
+            }//end if
+
+            return endValue - startValue;
 
         }//end method
 
