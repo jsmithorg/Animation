@@ -13,16 +13,18 @@ namespace JSmith.Animation
 {
     public class MarginTween : Tween
     {
-        private Thickness _startMargin;
-        private Thickness _endMargin;
+        public new Thickness StartValue { get; set; }
+        public new Thickness EndValue { get; set; }
+
+        public MarginTween() : base() { }
 
         public MarginTween(FrameworkElement target, Thickness startValue, Thickness endValue, Duration duration) : this(target, startValue, endValue, duration, new LinearEase()) { }
 
-        public MarginTween(FrameworkElement target, Thickness startValue, Thickness endValue, Duration duration, IEasingFunction easingFunction)
+        public MarginTween(FrameworkElement target, Thickness startValue, Thickness endValue, Duration duration, IEasingFunction easingFunction) : this()
         {
-            _startMargin = startValue;
-            _endMargin = endValue;
-
+            StartValue = startValue;
+            EndValue = endValue;
+            
             Target = target;
             Duration = duration;
             EasingFunction = easingFunction;
@@ -43,21 +45,21 @@ namespace JSmith.Animation
             double percentage = -timeDiff / Duration.TimeSpan.TotalMilliseconds;
 
             double newPercentage = EasingFunction.Ease(percentage);
-            double difference = GetDifference(_startMargin.Left, _endMargin.Left);
+            double difference = GetDifference(StartValue.Left, EndValue.Left);
 
             Thickness newMargin = new Thickness
             {
-                Left = (_startMargin.Left + (GetDifference(_startMargin.Left, _endMargin.Left) * newPercentage)),
-                Right = (_startMargin.Right + (GetDifference(_startMargin.Right, _endMargin.Right) * newPercentage)),
-                Top = (_startMargin.Top + (GetDifference(_startMargin.Top, _endMargin.Top) * newPercentage)),
-                Bottom = (_startMargin.Bottom + (GetDifference(_startMargin.Bottom, _endMargin.Bottom) * newPercentage))
+                Left = (StartValue.Left + (GetDifference(StartValue.Left, EndValue.Left) * newPercentage)),
+                Right = (StartValue.Right + (GetDifference(StartValue.Right, EndValue.Right) * newPercentage)),
+                Top = (StartValue.Top + (GetDifference(StartValue.Top, EndValue.Top) * newPercentage)),
+                Bottom = (StartValue.Bottom + (GetDifference(StartValue.Bottom, EndValue.Bottom) * newPercentage))
             };
 
             return newMargin;
 
         }//end method
 
-        protected double GetDifference(double startValue, double endValue)
+        /*protected double GetDifference(double startValue, double endValue)
         {
             double newStartValue = startValue;
             double newEndValue = endValue;
@@ -79,6 +81,7 @@ namespace JSmith.Animation
             return endValue - startValue;
 
         }//end method
+        */
 
     }//end class
 
