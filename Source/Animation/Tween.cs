@@ -198,9 +198,7 @@ namespace JSmith.Animation
         {
             ((Storyboard)sender).Completed -= new EventHandler(sb_Completed);
 
-            timer = new Storyboard();
-            timer.Duration = _interval;//new Duration(new TimeSpan(0, 0, 0, 0, _interval));
-            timer.Completed += new EventHandler(timer_Tick);
+            CreateTimer();
 
             startTime = DateTime.Now;
 
@@ -210,12 +208,14 @@ namespace JSmith.Animation
 
         public override void Pause()
         {
-            throw new NotImplementedException();
+            DestroyTimer();
         }
 
         public override void Resume()
         {
-            throw new NotImplementedException();
+            CreateTimer();
+
+            timer.Begin();
         }
 
         public override void Seek(TimeSpan offset)
@@ -244,7 +244,7 @@ namespace JSmith.Animation
 
             //timer.Stop();
             //timer.Pause();
-            IsTweening = false;
+            //IsTweening = false;
 
             DestroyTimer();
 
@@ -415,11 +415,19 @@ namespace JSmith.Animation
 
         }//end method
 
+        protected void CreateTimer()
+        {
+            timer = new Storyboard();
+            timer.Duration = _interval;//new Duration(new TimeSpan(0, 0, 0, 0, _interval));
+            timer.Completed += new EventHandler(timer_Tick);
+
+        }//end method
+
         protected void DestroyTimer()
         {
             //don't try to destroy again, or face
             //a null reference exception
-            if (IsTimerDestroyed)
+            if (IsTimerDestroyed || timer == null)
                 return;
 
             //Stop();
@@ -430,6 +438,7 @@ namespace JSmith.Animation
             timer = null;
 
             IsTimerDestroyed = true;
+            IsTweening = false;
 
         }//end method
 
