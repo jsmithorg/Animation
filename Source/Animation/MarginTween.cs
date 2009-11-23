@@ -13,8 +13,8 @@ namespace JSmith.Animation
 {
     public class MarginTween : Tween
     {
-        public new Thickness StartValue { get; set; }
-        public new Thickness EndValue { get; set; }
+        public Thickness StartMargin { get; set; }
+        public Thickness EndMargin { get; set; }
 
         public MarginTween() : base() { }
 
@@ -22,8 +22,8 @@ namespace JSmith.Animation
 
         public MarginTween(FrameworkElement target, Thickness startValue, Thickness endValue, Duration duration, IEasingFunction easingFunction) : this()
         {
-            StartValue = startValue;
-            EndValue = endValue;
+            StartMargin = startValue;
+            EndMargin = endValue;
             
             Target = target;
             Duration = duration;
@@ -45,14 +45,14 @@ namespace JSmith.Animation
             double percentage = -timeDiff / Duration.TimeSpan.TotalMilliseconds;
 
             double newPercentage = EasingFunction.Ease(percentage);
-            double difference = GetDifference(StartValue.Left, EndValue.Left);
+            double difference = GetDifference(StartMargin.Left, EndMargin.Left);
 
             Thickness newMargin = new Thickness
             {
-                Left = (StartValue.Left + (GetDifference(StartValue.Left, EndValue.Left) * newPercentage)),
-                Right = (StartValue.Right + (GetDifference(StartValue.Right, EndValue.Right) * newPercentage)),
-                Top = (StartValue.Top + (GetDifference(StartValue.Top, EndValue.Top) * newPercentage)),
-                Bottom = (StartValue.Bottom + (GetDifference(StartValue.Bottom, EndValue.Bottom) * newPercentage))
+                Left = (StartMargin.Left + (GetDifference(StartMargin.Left, EndMargin.Left) * newPercentage)),
+                Right = (StartMargin.Right + (GetDifference(StartMargin.Right, EndMargin.Right) * newPercentage)),
+                Top = (StartMargin.Top + (GetDifference(StartMargin.Top, EndMargin.Top) * newPercentage)),
+                Bottom = (StartMargin.Bottom + (GetDifference(StartMargin.Bottom, EndMargin.Bottom) * newPercentage))
             };
 
             return newMargin;
